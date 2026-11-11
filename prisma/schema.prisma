@@ -33,6 +33,7 @@ model User {
   twoFactorOtpUseds    TwoFactorOtpUsed[]
   twoFactorRateLimit   TwoFactorRateLimit?
   apiKeys              ApiKey[]
+  linkDomains          LinkDomain[]
 
   @@map("user")
 }
@@ -244,6 +245,7 @@ model Team {
   links    Link[]
   pixels   Pixel[]
   boards   Board[]
+  linkDomains LinkDomain[]
 
   @@index([accessCode])
   @@map("team")
@@ -356,6 +358,29 @@ model Link {
   @@index([teamId])
   @@index([createdAt])
   @@map("link")
+
+  // Fork: optional branded domain. Kept below the upstream fields to ease merges.
+  domainId String?     @map("domain_id") @db.Uuid
+  domain   LinkDomain? @relation(fields: [domainId], references: [id], onDelete: SetNull)
+
+  @@index([domainId])
+}
+
+// Fork: a hostname, owned by a user or a team, that serves that owner's links at /<slug>.
+model LinkDomain {
+  id        String    @id() @map("link_domain_id") @db.Uuid
+  hostname  String    @unique() @db.VarChar(253)
+  userId    String?   @map("user_id") @db.Uuid
+  teamId    String?   @map("team_id") @db.Uuid
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user  User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team  Team?  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  links Link[]
+
+  @@index([userId])
+  @@index([teamId])
+  @@map("link_domain")
 }
 
 model Pixel {

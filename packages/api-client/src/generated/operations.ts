@@ -202,6 +202,14 @@ export const operations = {
     queryParams: [],
     hasBody: false,
   },
+  deleteLinkDomainsDomainId: {
+    operationId: 'deleteLinkDomainsDomainId',
+    method: 'delete',
+    path: '/api/link-domains/{domainId}',
+    pathParams: ['domainId'],
+    queryParams: [],
+    hasBody: false,
+  },
   deleteMyApiKey: {
     operationId: 'deleteMyApiKey',
     method: 'delete',
@@ -855,6 +863,14 @@ export const operations = {
     path: '/api/links/{linkId}',
     pathParams: ['linkId'],
     queryParams: [],
+    hasBody: false,
+  },
+  getLinkDomains: {
+    operationId: 'getLinkDomains',
+    method: 'get',
+    path: '/api/link-domains',
+    pathParams: [],
+    queryParams: ['teamId'],
     hasBody: false,
   },
   getLinks: {
@@ -2939,6 +2955,22 @@ export const operations = {
     queryParams: [],
     hasBody: false,
   },
+  postLinkDomains: {
+    operationId: 'postLinkDomains',
+    method: 'post',
+    path: '/api/link-domains',
+    pathParams: [],
+    queryParams: [],
+    hasBody: true,
+  },
+  postLinkDomainsDomainIdCheck: {
+    operationId: 'postLinkDomainsDomainIdCheck',
+    method: 'post',
+    path: '/api/link-domains/{domainId}/check',
+    pathParams: ['domainId'],
+    queryParams: [],
+    hasBody: false,
+  },
   record: {
     operationId: 'record',
     method: 'post',
@@ -3424,6 +3456,17 @@ export abstract class GeneratedUmamiClient {
   }
 
   /**
+   * Delete link domains domain id
+   * `DELETE /api/link-domains/{domainId}`
+   */
+  deleteLinkDomainsDomainId(
+    input: OperationInput<'deleteLinkDomainsDomainId'>,
+    options?: RequestOptions,
+  ): Promise<OperationOutput<'deleteLinkDomainsDomainId'>> {
+    return this.execute('deleteLinkDomainsDomainId', input, options);
+  }
+
+  /**
    * Delete an API key
    * Deletes an API key belonging to the current user, revoking its access. Available on self-hosted installations.
    * `DELETE /api/me/api-keys/{keyId}`
@@ -3791,6 +3834,17 @@ export abstract class GeneratedUmamiClient {
     options?: RequestOptions,
   ): Promise<OperationOutput<'getLink'>> {
     return this.execute('getLink', input, options);
+  }
+
+  /**
+   * Get link domains
+   * `GET /api/link-domains`
+   */
+  getLinkDomains(
+    input?: OperationInput<'getLinkDomains'>,
+    options?: RequestOptions,
+  ): Promise<OperationOutput<'getLinkDomains'>> {
+    return this.execute('getLinkDomains', input, options);
   }
 
   /**
@@ -4866,6 +4920,28 @@ export abstract class GeneratedUmamiClient {
     options?: RequestOptions,
   ): Promise<OperationOutput<'logout'>> {
     return this.execute('logout', input, options);
+  }
+
+  /**
+   * Create or update link domains
+   * `POST /api/link-domains`
+   */
+  postLinkDomains(
+    input: OperationInput<'postLinkDomains'>,
+    options?: RequestOptions,
+  ): Promise<OperationOutput<'postLinkDomains'>> {
+    return this.execute('postLinkDomains', input, options);
+  }
+
+  /**
+   * Create or update link domains domain id check
+   * `POST /api/link-domains/{domainId}/check`
+   */
+  postLinkDomainsDomainIdCheck(
+    input: OperationInput<'postLinkDomainsDomainIdCheck'>,
+    options?: RequestOptions,
+  ): Promise<OperationOutput<'postLinkDomainsDomainIdCheck'>> {
+    return this.execute('postLinkDomainsDomainIdCheck', input, options);
   }
 
   /**

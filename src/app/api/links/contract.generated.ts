@@ -238,6 +238,17 @@ const operation2 = defineOperation({
                   },
                 ],
               },
+              domainId: {
+                anyOf: [
+                  {
+                    type: 'string',
+                    format: 'uuid',
+                  },
+                  {
+                    type: 'null',
+                  },
+                ],
+              },
             },
             required: ['name', 'url', 'slug'],
           },

@@ -5,9 +5,11 @@ import { DateDistance } from '@/components/common/DateDistance';
 import { ExternalLink } from '@/components/common/ExternalLink';
 import Link from '@/components/common/Link';
 import { SortableLabel } from '@/components/common/SortableLabel';
-import { useLinkListChartsQuery, useMessages, useNavigation, useSlug } from '@/components/hooks';
+import { useLinkListChartsQuery, useMessages, useNavigation } from '@/components/hooks';
+import { useLinkUrl } from '@/components/hooks/useLinkUrl';
 import { LinkDeleteButton } from './LinkDeleteButton';
 import { LinkEditButton } from './LinkEditButton';
+import { LinkQRCodeButton } from './LinkQRCodeButton';
 
 export interface LinksTableProps extends DataTableProps {
   showActions?: boolean;
@@ -16,7 +18,8 @@ export interface LinksTableProps extends DataTableProps {
 export function LinksTable({ showActions, data = [], ...props }: LinksTableProps & { data?: any[] }) {
   const { t, labels } = useMessages();
   const { websiteId, renderUrl } = useNavigation();
-  const { getSlugUrl } = useSlug('link');
+  const { teamId } = useNavigation();
+  const { getLinkUrl } = useLinkUrl(teamId);
   const linkIds = useMemo(() => data.map(row => row.id), [data]);
   const chartsQuery = useLinkListChartsQuery(linkIds);
   const charts = chartsQuery.data?.data || {};
@@ -34,8 +37,8 @@ export function LinksTable({ showActions, data = [], ...props }: LinksTableProps
         label={<SortableLabel label={t(labels.link)} sortKey="slug" />}
         style={{ minWidth: 0 }}
       >
-        {({ slug }: any) => {
-          const url = getSlugUrl(slug);
+        {(row: any) => {
+          const url = getLinkUrl(row);
           return <ExternalLink href={url}>{url}</ExternalLink>;
         }}
       </DataColumn>
@@ -75,10 +78,11 @@ export function LinksTable({ showActions, data = [], ...props }: LinksTableProps
         {(row: any) => <DateDistance date={new Date(row.createdAt)} />}
       </DataColumn>
       {showActions && (
-        <DataColumn id="action" align="end" width="72px">
-          {({ id, name }: any) => {
+        <DataColumn id="action" align="end" width="176px">
+          {({ id, name, ...row }: any) => {
             return (
               <Row gap="2">
+                <LinkQRCodeButton url={getLinkUrl(row)} name={name} />
                 <LinkEditButton linkId={id} />
                 <LinkDeleteButton linkId={id} websiteId={websiteId} name={name} />
               </Row>

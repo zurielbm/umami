@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { getContentSecurityPolicy } from '@/lib/csp';
+import { linkDomainProxy } from '@/lib/link-domain-proxy';
 import { matchesConfiguredPath } from '@/lib/match-configured-path';
 
 export const config = {
@@ -82,7 +83,14 @@ function disableLogin(request: NextRequest) {
   }
 }
 
-export default function middleware(req: NextRequest) {
+export default async function middleware(req: NextRequest) {
+  // Fork: a request on a link domain is answered here and goes no further.
+  const linkResponse = await linkDomainProxy(req);
+
+  if (linkResponse) {
+    return linkResponse;
+  }
+
   const fns = [customCollectEndpoint, customScriptName, customScriptUrl, disableLogin];
 
   let res: NextResponse | undefined;

@@ -530,6 +530,58 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/link-domains': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get link domains */
+    get: operations['getLinkDomains'];
+    put?: never;
+    /** Create or update link domains */
+    post: operations['postLinkDomains'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/link-domains/{domainId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete link domains domain id */
+    delete: operations['deleteLinkDomainsDomainId'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/link-domains/{domainId}/check': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create or update link domains domain id check */
+    post: operations['postLinkDomainsDomainIdCheck'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/links': {
     parameters: {
       query?: never;
@@ -6362,6 +6414,253 @@ export interface operations {
       };
     };
   };
+  getLinkDomains: {
+    parameters: {
+      query?: {
+        /** @description ID of the associated team. */
+        teamId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /**
+             * Format: date-time
+             * @description Date and time the record was created.
+             */
+            createdAt: string;
+            /** @description Hostname on which the activity occurred. */
+            hostname: string;
+            /** @description Unique identifier of the resource. */
+            id: string;
+            /** @description ID of the associated team. */
+            teamId: string;
+            /** @description ID of the associated user. */
+            userId: string;
+          }[];
+        };
+      };
+      /** @description Bad request. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "error": {
+           *         "code": "bad-request",
+           *         "message": "Bad request.",
+           *         "status": 400
+           *       }
+           *     }
+           */
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Unauthorized. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "error": {
+           *         "code": "unauthorized",
+           *         "message": "Unauthorized.",
+           *         "status": 401
+           *       }
+           *     }
+           */
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  postLinkDomains: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          /** @description Hostname on which the activity occurred. */
+          hostname: unknown;
+          /** @description ID of the associated team. */
+          teamId?: string | null;
+        };
+      };
+    };
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /**
+             * Format: date-time
+             * @description Date and time the record was created.
+             */
+            createdAt: string;
+            /** @description Hostname on which the activity occurred. */
+            hostname: string;
+            /** @description Unique identifier of the resource. */
+            id: string;
+            /** @description ID of the associated team. */
+            teamId: string;
+            /** @description ID of the associated user. */
+            userId: string;
+          };
+        };
+      };
+      /** @description Bad request. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "error": {
+           *         "code": "bad-request",
+           *         "message": "Bad request.",
+           *         "status": 400
+           *       }
+           *     }
+           */
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Unauthorized. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "error": {
+           *         "code": "unauthorized",
+           *         "message": "Unauthorized.",
+           *         "status": 401
+           *       }
+           *     }
+           */
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  deleteLinkDomainsDomainId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        domainId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /**
+             * @description Whether the operation succeeded.
+             * @constant
+             */
+            ok: true;
+          };
+        };
+      };
+      /** @description Unauthorized. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "error": {
+           *         "code": "unauthorized",
+           *         "message": "Unauthorized.",
+           *         "status": 401
+           *       }
+           *     }
+           */
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  postLinkDomainsDomainIdCheck: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        domainId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json':
+            | {
+                /** @constant */
+                connected: true;
+              }
+            | {
+                /** @constant */
+                connected: false;
+                reason: 'unreachable' | 'other-server';
+              };
+        };
+      };
+      /** @description Unauthorized. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "error": {
+           *         "code": "unauthorized",
+           *         "message": "Unauthorized.",
+           *         "status": 401
+           *       }
+           *     }
+           */
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
   getLinks: {
     parameters: {
       query?: {
@@ -6486,6 +6785,7 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': {
+          domainId?: string | null;
           /** @description Unique identifier of the resource. */
           id?: string | null;
           /** @description Display name of the resource. */
@@ -6657,6 +6957,7 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': {
+          domainId?: string | null;
           /** @description Display name of the resource. */
           name?: string;
           /** @description URL slug used to access the resource. */

@@ -1,6 +1,7 @@
 export * from './board';
 export * from './entity';
 export * from './link';
+export * from './link-domain';
 export * from './pixel';
 export * from './report';
 export * from './share';

@@ -193,6 +193,17 @@ const operation3 = defineOperation({
                 minLength: 8,
                 maxLength: 100,
               },
+              domainId: {
+                anyOf: [
+                  {
+                    type: 'string',
+                    format: 'uuid',
+                  },
+                  {
+                    type: 'null',
+                  },
+                ],
+              },
             },
           },
         },

@@ -14,10 +14,12 @@ import {
 import { useState } from 'react';
 import { useConfig, useLinkQuery, useMessages } from '@/components/hooks';
 import { useUpdateQuery } from '@/components/hooks/queries/useUpdateQuery';
+import { useLinkUrl } from '@/components/hooks/useLinkUrl';
 import { RefreshCw } from '@/components/icons';
 import { LINKS_URL } from '@/lib/constants';
 import { getRandomChars } from '@/lib/generate';
 import { isValidUrl } from '@/lib/url';
+import { LinkDomainField } from './LinkDomainField';
 
 const generateId = () => getRandomChars(9);
 
@@ -45,6 +47,7 @@ export function LinkEditForm({
   const linksUrl = config?.linksUrl;
   const hostUrl = linksUrl || LINKS_URL;
   const { data, isLoading } = useLinkQuery(linkId);
+  const { getLinkUrl, domains } = useLinkUrl(teamId || data?.teamId);
   const [defaultSlug] = useState(generateId());
 
   const handleSubmit = async (data: any) => {
@@ -125,11 +128,17 @@ export function LinkEditForm({
               </Grid>
             )}
 
+            <LinkDomainField
+              domains={domains}
+              value={watch('domainId')}
+              onChange={domainId => setValue('domainId', domainId, { shouldDirty: true })}
+            />
+
             <Column gap="1">
               <Label>{t(labels.link)}</Label>
               <Row alignItems="center" gap>
                 <TextField
-                  value={`${hostUrl}/${slug}`}
+                  value={getLinkUrl({ slug, domainId: watch('domainId') })}
                   autoComplete="off"
                   isReadOnly
                   allowCopy

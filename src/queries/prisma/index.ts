@@ -2,6 +2,7 @@ export * from './annotation';
 export * from './apiKey';
 export * from './board';
 export * from './link';
+export * from './linkDomain';
 export * from './pixel';
 export * from './report';
 export * from './segment';

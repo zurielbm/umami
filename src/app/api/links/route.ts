@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { uuid } from '@/lib/crypto';
 import { getQueryFilters, parseRequest } from '@/lib/request';
-import { json, unauthorized } from '@/lib/response';
+import { badRequest, json, unauthorized } from '@/lib/response';
 import { pagingParams, searchParams, sortingParams } from '@/lib/schema';
-import { canCreateTeamWebsite, canCreateWebsite } from '@/permissions';
+import { canCreateTeamWebsite, canCreateWebsite, isLinkDomainOwnedBy } from '@/permissions';
 import { createLink, getUserLinks } from '@/queries/prisma';
 
 export async function GET(request: Request) {
@@ -33,6 +33,7 @@ export async function POST(request: Request) {
     slug: z.string().min(8).max(100),
     teamId: z.string().nullable().optional(),
     id: z.uuid().nullable().optional(),
+    domainId: z.uuid().nullable().optional(),
   });
 
   const { auth, body, error } = await parseRequest(request, schema);
@@ -57,6 +58,15 @@ export async function POST(request: Request) {
 
   if (!teamId) {
     data.userId = auth.user.id;
+  }
+
+  // Fork: optional branded domain, which must belong to the same owner as the link.
+  if (body.domainId) {
+    if (!(await isLinkDomainOwnedBy(body.domainId, { userId: data.userId, teamId }))) {
+      return badRequest({ message: 'That domain cannot be used for this link.' });
+    }
+
+    data.domainId = body.domainId;
   }
 
   const result = await createLink(data);

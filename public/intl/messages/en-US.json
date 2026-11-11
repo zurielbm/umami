@@ -251,6 +251,7 @@
     "profiles": "Profiles",
     "properties": "Properties",
     "property": "Property",
+    "qr-code": "QR code",
     "queries": "Queries",
     "query": "Query",
     "query-parameters": "Query parameters",
@@ -432,6 +433,11 @@
     "last-used": "Last used",
     "never": "Never",
     "copy": "Copy",
+    "copy-image": "Copy image",
+    "domains": "Domains",
+    "default-domain": "Default",
+    "check-connection": "Check connection",
+    "connected": "Connected",
     "authorize": "Authorize",
     "deny": "Deny"
   },
@@ -521,6 +527,9 @@
     "two-factor-locked-message": "Too many failed attempts. Try again at {time}.",
     "two-factor-active-description": "Your account is protected with two-factor authentication. Each login requires a code from your authenticator app.",
     "api-key-created": "Copy your API key now. You won't be able to see it again.",
-    "no-api-keys": "You have not created any API keys."
+    "no-api-keys": "You have not created any API keys.",
+    "link-domain-help": "Add a domain that you or a client owns, then point it at this server with a DNS record. A link that uses the domain opens at https://domain/slug.",
+    "link-domain-unreachable": "No answer over HTTPS. Check the DNS record and the certificate for this domain.",
+    "link-domain-other-server": "The domain answers, but from a different server."
   }
 }
