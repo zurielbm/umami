@@ -6,6 +6,7 @@ import { uuid } from '@/lib/crypto';
 import { getBaseUrl } from '@/lib/get-base-url';
 import { authenticateMcpRequest, mcpAuthErrorResponse } from '@/lib/mcp/auth';
 import { createInProcessFetch } from '@/lib/mcp/dispatch';
+import { getMcpTools } from '@/lib/mcp/link-tools';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,6 +25,10 @@ const logger: McpLogger = {
  */
 const handler = createUmamiMcpHttpHandler({
   logger,
+  // Fork: the team's analytics tools plus the link tools, read when a request arrives.
+  get tools() {
+    return getMcpTools();
+  },
   onerror: error => log('handler error: %s', error?.message),
   createClient: (authInfo, ctx) => {
     const baseUrl = getBaseUrl(ctx.requestInfo?.headers).toString().replace(/\/+$/, '');

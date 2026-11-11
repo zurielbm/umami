@@ -6,7 +6,7 @@ export const QR_PNG_SIZE = 1024;
 
 // Medium error correction keeps the code sparse enough to scan from a small print,
 // and the 4-module margin is the quiet zone scanners expect.
-const QR_OPTIONS = { errorCorrectionLevel: 'M', margin: 4 } as const;
+export const QR_OPTIONS = { errorCorrectionLevel: 'M', margin: 4 } as const;
 
 export function getQrSvg(text: string): Promise<string> {
   return qrcode.toString(text, { ...QR_OPTIONS, type: 'svg' });
