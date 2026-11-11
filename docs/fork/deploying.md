@@ -6,7 +6,8 @@ the fork. The database stays where it is; only the app container changes.
 Last checked: 2026-11-11, on the development server with throwaway containers. A database created
 by the official `ghcr.io/umami-software/umami:postgresql-latest` image (v3.4.1) was handed to an
 image built from this fork, then handed back to the official image. Every step below was run
-there. None of it has been run on the owner's VPS yet.
+there. The owner then made the switch on their VPS through Dokploy the same day (backup, then
+the Dokploy steps below) and confirmed the app and its `/mcp` endpoint work.
 
 ## What the switch does
 
@@ -47,9 +48,14 @@ switch is steps 3 and 5 below plus this, instead of steps 1, 2 and 4:
 - The build used about 4 GB of memory on the development server. If the VPS has less free, the
   build fails or the server starts killing processes; use steps 1, 2 and 4 instead and build
   elsewhere.
+- **A variable set in Dokploy's Environment tab does nothing by itself.** That tab only fills
+  `${NAME}` placeholders in the compose file. To give the app a variable, list it under the
+  `umami` service's `environment:` as well (for example `MCP_ENABLED: "1"`, or
+  `LINKS_URL: ${LINKS_URL}`), then deploy. Found on the owner's server: `/mcp` answered 404
+  until `MCP_ENABLED` was added to the compose file.
 - Building from a Git address was checked on the development server (a copy of the branch served
-  over `git://`): the image built, started and served a branded link. It was not run through
-  Dokploy itself.
+  over `git://`): the image built, started and served a branded link. The owner's Dokploy
+  service builds the same way.
 - Dokploy's Traefik sits in front of the container; the service's Domains tab holds the
   hostnames it answers for. Client domains are added there too, see
   [`link-domains.md`](link-domains.md).

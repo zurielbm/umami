@@ -3,6 +3,9 @@
 For an agent that needs to create, change or look up short links in a running instance of this
 fork, without a person clicking through the interface.
 
+**If you have the `umami` MCP server, use its tools** (see "MCP tools" below) instead of raw
+requests. The rules on this page apply either way.
+
 Last checked: 2026-11-11, against Umami v3.4.1. Creating, changing and listing links, and the
 link-domain requests for a user's own domains, were run against a local instance of this fork.
 Deleting a link and the team variants (`teamId`) were written from the route code and are covered
@@ -110,9 +113,15 @@ registers the name; a person still has to point DNS at the server and arrange a 
 ## QR codes
 
 The interface has a QR button on the Links page and on each link's page, with PNG and SVG
-downloads. There is no API route for it yet. Until the planned `get_link_qr` MCP tool exists,
-generate the code yourself from the address above. To match what the interface produces, use
-error-correction level M and a 4-module margin (see `src/lib/qr.ts`).
+downloads. The MCP tool `get_link_qr` returns the same code as SVG text or a base64 PNG, with a
+file name. There is no plain API route for it; without MCP, generate the code yourself from the
+address above, with error-correction level M and a 4-module margin (see `src/lib/qr.ts`).
+
+**Counting scans separately from clicks.** A code normally holds the plain address, so a scan
+and a click look the same. `get_link_qr` with `utmSource: "qr"` puts `?utm_source=qr` inside the
+code; scans then appear under that UTM source in the link's statistics. Decide this before a
+code is printed, because a printed code cannot be changed. The owner has not chosen a default;
+ask.
 
 ## Before you create anything
 
@@ -144,9 +153,32 @@ error-correction level M and a 4-module margin (see `src/lib/qr.ts`).
 - **Remove a link domain without being asked.** Every branded address on it stops working at once,
   including printed QR codes; the links themselves survive at their default address.
 
-## MCP
+## MCP tools
 
 The instance has an MCP endpoint at `/mcp`, enabled with `MCP_ENABLED=1` and signed in with the
-same API key. Today it offers read-only analytics tools and nothing for links; see
-`packages/mcp/README.md`. Link tools are planned. When they exist, prefer them over raw requests
-and update this page.
+same API key. It offers the Umami team's read-only analytics tools (see `packages/mcp/README.md`)
+plus this fork's link tools:
+
+| Tool | What it does |
+| ---- | ------------ |
+| `list_teams` | Teams you belong to. A team is how links are filed under a company or client. |
+| `list_link_domains` | Branded hostnames, yours or a team's (`teamId`). |
+| `list_links` | Links with their public address, yours or a team's. Search here before creating. |
+| `get_link` | One link. |
+| `create_link` | Creates a link. `teamId` files it under a company; `domainId` puts it on that company's domain. Leave `slug` out for a random one. |
+| `update_link` | Changes the name, destination or domain. It cannot change the slug. |
+| `get_link_qr` | The QR code for a link, as SVG or PNG. |
+
+- **Statistics for a link:** pass the link's `id` as `websiteId` to `get_website_stats`,
+  `get_website_traffic` or `get_website_metrics`. A link is tracked like a website of its own.
+- **Which company a link belongs to:** its `teamId`, and its `domain` when it has one. File a
+  client's links under that client's team, not under your own user.
+- **There is no tool that deletes a link, adds a domain or removes one.** Those stay with a
+  person, in the interface.
+- The link tools exist only on the instance's `/mcp` endpoint, not in the standalone
+  `npx @umami/mcp` server.
+- If your tool list has no `create_link`, the instance runs a build from before these tools.
+  Tell the owner; do not fall back to raw requests without saying so.
+
+Checked on 2026-11-11 against a local instance: every tool above, a scan recorded under
+`utm_source=qr`, and the link's statistics read back through `get_website_stats`.

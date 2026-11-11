@@ -119,8 +119,10 @@ APP_SECRET="$(cat /path/outside/repo/app_secret)" \
   running server keeps the old client and fails with "Unknown argument" or "undefined".
 - Clicks from `curl` are not recorded (its user agent is treated as a bot). Send a browser
   `User-Agent` header when you need to see a visit in the database.
-- `next dev` appends a block between `<!-- BEGIN:nextjs-agent-rules -->` markers to this file and
-  re-adds it if removed. Leave it in place.
+- `next dev` keeps a block of its own at the end of this file ("This is NOT the Next.js you
+  know"), between two HTML comment markers, and re-adds it if removed. Leave it in place. Never
+  write the marker text anywhere else in this file: `next dev` replaces everything from the first
+  marker it finds to the end marker, which once deleted 155 lines of this guide.
 - To test a link domain without DNS, send the Host header yourself:
   `curl -i -H "Host: go.brand.test" http://127.0.0.1:3000/<slug>`.
 
@@ -165,6 +167,10 @@ conflict later.
   `src/proxy.ts`, keep `/api/` out of the matcher: Next.js buffers the body of every request the
   proxy sees. The team's Docker proxy matches every path, including the tracking endpoint, so
   code called from it must not wait on the database for ordinary requests.
+- **MCP tools:** the team's tools live in `packages/mcp` and are all read-only. Do not add
+  tools there. Fork tools go in `src/lib/mcp/link-tools.ts`, and any API route they call must be
+  listed in `src/lib/mcp/link-dispatch.ts`; a route that is not listed cannot be reached from
+  MCP. Keep delete routes out of that list unless the owner asks for them.
 - **New dependencies:** avoid them. Check `package.json` first; for example `qrcode` was already
   installed.
 - **Environment variables:** follow the owner's global rules. Any added, renamed or removed
@@ -183,9 +189,10 @@ conflict later.
 | QR code for a link | On `production`. Checked in a browser: dialog, PNG and SVG downloads, copy; the PNG decodes back to the link | `src/lib/qr.ts`, `src/app/(main)/links/LinkQRCodeButton.tsx` |
 | Client-owned link domains | On `production`. Checked against a local server in dev and production builds, and in the Docker image | See "Link domains" below |
 | Short link domain for the whole instance | On `production`. Checked in dev and production builds, not in the Docker image | `src/lib/link-domain-proxy.ts`, `LINKS_URL` |
-| Link tools for the MCP server | Planned, not started | `packages/mcp/src/tools/` |
+| Link tools for the MCP server (list, create, update, QR code, teams, domains) | On `production`. Checked against a local server and in the Docker image, not yet on the owner's server | `src/lib/mcp/link-tools.ts`, `src/lib/mcp/link-dispatch.ts`, wired in `src/app/mcp/route.ts` |
 
-None of this has run on a deployed instance with real DNS or certificates yet.
+The owner's server has run this fork since 2026-11-11 (see `docs/fork/deploying.md`). Client
+domains have not been tried there with real DNS or certificates yet.
 
 How an agent creates and manages links in a running instance is in
 [`docs/fork/links-for-agents.md`](docs/fork/links-for-agents.md). How to replace a running
@@ -261,8 +268,9 @@ Ask the owner; do not assume an answer.
 
 1. Which Infisical project holds the instance's variables. (Where it runs is settled: a VPS
    managed with Dokploy, as a Compose service; see `docs/fork/deploying.md`.)
-2. Whether a QR code should add a marker such as `?src=qr` so scans count separately from clicks.
-   Currently it does not.
+2. Whether QR codes should carry a marker by default so scans count separately from clicks.
+   Currently they do not; the MCP tool `get_link_qr` can add `?utm_source=<value>` when asked,
+   and the QR button in the interface cannot.
 3. Whether two clients on different domains may use the same slug. Currently slugs are unique
    across the whole instance.
 
